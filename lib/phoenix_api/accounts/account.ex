@@ -23,7 +23,7 @@ defmodule PhoenixApi.Accounts.Account do
     |> put_password_hash()
   end
 
-  defp put_password_hash(%Ecto.Changeset( valid?: true, change: %{hash_password: hash_password}) = changeset) do
+  defp put_password_hash(%Ecto.Changeset{valid?: true, changes: %{hash_password: hash_password}} = changeset ) do
     change(changeset, hash_password: Pbkdf2.hash_pwd_salt(hash_password))
   end
 end

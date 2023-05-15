@@ -1,8 +1,11 @@
 defmodule PhoenixApiWeb.AccountController do
   use PhoenixApiWeb, :controller
 
+  alias PhoenixApiWeb.Auth.Guardian
+  alias PhoenixApi.Users.User
   alias PhoenixApi.Accounts
   alias PhoenixApi.Accounts.Account
+  alias PhoenixApi.Users
 
   action_fallback PhoenixApiWeb.FallbackController
 
@@ -12,14 +15,16 @@ defmodule PhoenixApiWeb.AccountController do
   end
 
   def create(conn, %{"account" => account_params}) do
-    with {:ok, %Account{} = account} <- Accounts.create_account(account_params) do
+    with {:ok, %Account{} = account} <- Accounts.create_account(account_params),
+          {:ok, token, _claims} <- Guardian.encode_and_sign(account),
+          {:ok, %User{} = _user} <- Users.create_user(account, account_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", Routes.account_path(conn, :show, account))
-      |> render("show.json", account: account)
+      |> render("account_token.json", %{account: account, token: token})
     end
   end
 
+  @spec show(Plug.Conn.t(), map) :: Plug.Conn.t()
   def show(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
     render(conn, "show.json", account: account)

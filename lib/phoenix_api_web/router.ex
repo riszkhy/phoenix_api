@@ -1,5 +1,14 @@
 defmodule PhoenixApiWeb.Router do
   use PhoenixApiWeb, :router
+  use Plug.ErrorHandler
+
+  def handle_errors(conn, %{reason: %Phoenix.Router.NoRouteError{message: message}}) do
+    conn |> json(%{errors: message}) |> halt()
+  end
+
+  def handle_errors(conn, %{reason: %{message: message}}) do
+    conn |> json(%{errors: message}) |> halt()
+  end
 
   pipeline :api do
     plug :accepts, ["json"]
@@ -9,5 +18,6 @@ defmodule PhoenixApiWeb.Router do
     pipe_through :api
     get "/", BaseController, :index
     post "/accounts/create", AccountController, :create
+    post "/accounts/signin", AccountController, :sign_in
   end
 end

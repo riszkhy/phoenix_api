@@ -1,6 +1,7 @@
 defmodule PhoenixApiWeb.AccountController do
   use PhoenixApiWeb, :controller
 
+  alias PhoenixApiWeb.Auth.ErrorResponse
   alias PhoenixApiWeb.Auth.Guardian
   alias PhoenixApi.Users.User
   alias PhoenixApi.Accounts
@@ -21,6 +22,16 @@ defmodule PhoenixApiWeb.AccountController do
       conn
       |> put_status(:created)
       |> render("account_token.json", %{account: account, token: token})
+    end
+  end
+
+  def sign_in(conn, %{"email" => email, "hash_password" => hash_password}) do
+    case Guardian.authenticate(email, hash_password) do
+      {:ok, account, token} ->
+        conn
+        |> put_status(:ok)
+        |> render("account_token.json", %{account: account, token: token})
+      {:error, :unauthorized} -> raise ErrorResponse.Unauthorized, message: "Email or Password is incorrect"
     end
   end
 

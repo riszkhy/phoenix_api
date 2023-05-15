@@ -8,5 +8,6 @@ defmodule PhoenixApiWeb.Router do
   scope "/api", PhoenixApiWeb do
     pipe_through :api
     get "/", BaseController, :index
+    post "/accounts/create", AccountController, :create
   end
 end

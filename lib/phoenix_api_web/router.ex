@@ -14,10 +14,19 @@ defmodule PhoenixApiWeb.Router do
     plug :accepts, ["json"]
   end
 
+  pipeline :auth do
+    plug PhoenixApiWeb.Auth.Pipeline
+  end
+
   scope "/api", PhoenixApiWeb do
     pipe_through :api
     get "/", BaseController, :index
     post "/accounts/create", AccountController, :create
     post "/accounts/signin", AccountController, :sign_in
+  end
+
+  scope "/api", PhoenixApiWeb do
+    pipe_through [:api, :auth]
+    get "/accounts/:id", AccountController, :show
   end
 end

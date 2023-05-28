@@ -41,6 +41,7 @@ defmodule PhoenixApiWeb.AccountController do
     render(conn, "show.json", account: account)
   end
 
+  @spec update(any, map) :: any
   def update(conn, %{"id" => id, "account" => account_params}) do
     account = Accounts.get_account!(id)
 
@@ -49,6 +50,7 @@ defmodule PhoenixApiWeb.AccountController do
     end
   end
 
+  @spec delete(any, map) :: any
   def delete(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
 

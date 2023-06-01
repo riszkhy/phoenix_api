@@ -29,6 +29,7 @@ defmodule PhoenixApiWeb.AccountController do
     case Guardian.authenticate(email, hash_password) do
       {:ok, account, token} ->
         conn
+        |> Plug.Conn.put_session(:account_id, account.id)
         |> put_status(:ok)
         |> render("account_token.json", %{account: account, token: token})
       {:error, :unauthorized} -> raise ErrorResponse.Unauthorized, message: "Email or Password is incorrect"
@@ -41,6 +42,7 @@ defmodule PhoenixApiWeb.AccountController do
     render(conn, "show.json", account: account)
   end
 
+  @spec update(any, map) :: any
   def update(conn, %{"id" => id, "account" => account_params}) do
     account = Accounts.get_account!(id)
 
@@ -49,6 +51,7 @@ defmodule PhoenixApiWeb.AccountController do
     end
   end
 
+  @spec delete(any, map) :: any
   def delete(conn, %{"id" => id}) do
     account = Accounts.get_account!(id)
 

@@ -74,7 +74,7 @@ defmodule PhoenixApi.Accounts do
   """
   def update_account(%Account{} = account, attrs) do
     account
-    |> Account.changeset(attrs)
+    |> Account.changeset_update(attrs)
     |> Repo.update()
   end
 

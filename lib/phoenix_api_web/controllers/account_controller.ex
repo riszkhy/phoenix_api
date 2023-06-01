@@ -10,6 +10,18 @@ defmodule PhoenixApiWeb.AccountController do
 
   action_fallback PhoenixApiWeb.FallbackController
 
+  plug :is_authorized_account when action in [:update, :delete]
+
+  defp is_authorized_account(conn, _) do
+    %{params: %{"account" => params}} = conn
+    account = Accounts.get_account_by_email(params["email"])
+    if conn.assigns.account.id == account.id do
+      conn
+    else
+      raise ErrorResponse.Forbidden
+    end
+  end
+
   def index(conn, _params) do
     accounts = Accounts.list_accounts()
     render(conn, "index.json", accounts: accounts)
@@ -25,6 +37,7 @@ defmodule PhoenixApiWeb.AccountController do
     end
   end
 
+  @spec sign_in(Plug.Conn.t(), map) :: Plug.Conn.t()
   def sign_in(conn, %{"email" => email, "hash_password" => hash_password}) do
     case Guardian.authenticate(email, hash_password) do
       {:ok, account, token} ->
@@ -43,8 +56,8 @@ defmodule PhoenixApiWeb.AccountController do
   end
 
   @spec update(any, map) :: any
-  def update(conn, %{"id" => id, "account" => account_params}) do
-    account = Accounts.get_account!(id)
+  def update(conn, %{"account" => account_params}) do
+    account = Accounts.get_account_by_email(account_params["email"])
 
     with {:ok, %Account{} = account} <- Accounts.update_account(account, account_params) do
       render(conn, "show.json", account: account)

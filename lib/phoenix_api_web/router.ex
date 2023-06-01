@@ -30,5 +30,6 @@ defmodule PhoenixApiWeb.Router do
   scope "/api", PhoenixApiWeb do
     pipe_through [:api, :auth]
     get "/accounts/detail/:id", AccountController, :show
+    post "/accounts/update", AccountController, :update
   end
 end

@@ -43,6 +43,7 @@ defmodule PhoenixApi.MixProject do
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
       {:guardian, "~> 2.3"},
+      {:guardian_db, "~> 2.1"},
       {:pbkdf2_elixir, "~> 2.0"}
     ]
   end

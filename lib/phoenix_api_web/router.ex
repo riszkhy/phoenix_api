@@ -31,5 +31,6 @@ defmodule PhoenixApiWeb.Router do
     pipe_through [:api, :auth]
     get "/accounts/detail/:id", AccountController, :show
     post "/accounts/update", AccountController, :update
+    patch "/accounts/signout", AccountController, :sign_out
   end
 end

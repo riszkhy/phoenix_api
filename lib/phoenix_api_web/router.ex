@@ -32,5 +32,6 @@ defmodule PhoenixApiWeb.Router do
     get "/accounts/detail/:id", AccountController, :show
     post "/accounts/update", AccountController, :update
     patch "/accounts/signout", AccountController, :sign_out
+    get "/accounts/refresh_session", AccountController, :refresh_session
   end
 end

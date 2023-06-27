@@ -22,6 +22,9 @@ defmodule PhoenixApiWeb.Auth.Guardian do
     {:error, :no_id_provided}
   end
 
+  @spec authenticate(any, any) ::
+          {:error, :unauthored | :unauthorized}
+          | {:ok, atom | %{:hash_password => any, optional(any) => any}, binary}
   def authenticate(email, password) do
     case Accounts.get_account_by_email(email) do
       nil -> {:error, :unauthored}
